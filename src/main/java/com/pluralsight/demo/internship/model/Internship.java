@@ -2,6 +2,8 @@ package com.pluralsight.demo.internship.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "internships")
 public class Internship {
@@ -13,7 +15,7 @@ public class Internship {
     private String title;
     
     private String company;
-    
+
     // Intentional flaw: no length constraint
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -22,6 +24,8 @@ public class Internship {
     
     // Intentional flaw: defaults to false, might be unexpected
     private boolean published = false;
+
+    private LocalDateTime createdAt;
 
     // Constructors
     public Internship() {
@@ -82,4 +86,10 @@ public class Internship {
     public void setPublished(boolean published) {
         this.published = published;
     }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt;}
+
+
 }

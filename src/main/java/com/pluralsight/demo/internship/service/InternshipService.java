@@ -4,7 +4,9 @@ import com.pluralsight.demo.internship.model.Internship;
 import com.pluralsight.demo.internship.repository.InternshipRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +15,7 @@ public class InternshipService {
 
     private final InternshipRepository internshipRepository;
     
-    @Value("${internships.auto-publish}")
+    @Value("${internships.auto-publish}") //on app.properties class
     private boolean autoPublish;
 
     public InternshipService(InternshipRepository internshipRepository) {
@@ -33,7 +35,31 @@ public class InternshipService {
                 .orElseThrow(() -> new RuntimeException("Internship not found with id: " + id));
     }
 
+    public List<Internship> getInternshipByLocation(String location){
+        return internshipRepository.findAll().stream()
+                .filter(c -> c.getLocation().toLowerCase().contains(location.toLowerCase()))
+                .filter(Internship::isPublished)
+                .toList();
+    }
+
+    public List<Internship> getInternshipByDescription(String description){
+        return internshipRepository.findAll().stream()
+                .filter(c -> c.getDescription().toLowerCase().contains(description.toLowerCase()))
+                .filter(Internship::isPublished)
+                .toList();
+    }
+
+    public List<Internship> getInternshipByCompany(String companyName){
+        return internshipRepository.findAll().stream()
+                .filter(c -> c.getCompany().toLowerCase().contains(companyName.toLowerCase()))
+                .filter(Internship::isPublished)
+                .toList();
+    }
+
     public Internship createInternship(Internship internship) {
+
+        internship.setCreatedAt(LocalDateTime.now() );
+
         // Apply auto-publish config
         if (autoPublish) {
             internship.setPublished(true);

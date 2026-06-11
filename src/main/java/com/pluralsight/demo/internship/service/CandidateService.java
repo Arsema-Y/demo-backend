@@ -2,14 +2,21 @@ package com.pluralsight.demo.internship.service;
 
 import com.pluralsight.demo.internship.model.Candidate;
 import com.pluralsight.demo.internship.repository.CandidateRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class CandidateService {
 
     private final CandidateRepository candidateRepository;
+
+    @Value("${candidates.visible-by-default}")
+    private boolean visibleByDefault;
 
     public CandidateService(CandidateRepository candidateRepository) {
         this.candidateRepository = candidateRepository;
@@ -25,7 +32,21 @@ public class CandidateService {
                 .orElseThrow(() -> new RuntimeException("Candidate not found with id: " + id));
     }
 
+    public List<Candidate> getCandidatesByFieldOfStudy(String fieldOfStudy){
+        return candidateRepository.findAll().stream()
+                .filter(c -> c.getFieldOfStudy().equalsIgnoreCase(fieldOfStudy))
+                .toList();
+    }
+
+    public List<Candidate> getCandidateByName(String name) {
+        return candidateRepository.findAll().stream()
+                .filter(c -> c.getName().toLowerCase().contains(name.toLowerCase()))
+                .toList();
+    }
+
     public Candidate createCandidate(Candidate candidate) {
+        candidate.setRegisteredAt(LocalDateTime.now());
+        candidate.setVisible(visibleByDefault);
         return candidateRepository.save(candidate);
     }
 
@@ -40,4 +61,6 @@ public class CandidateService {
     public void deleteCandidate(Long id) {
         candidateRepository.deleteById(id);
     }
+
+
 }

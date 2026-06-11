@@ -31,6 +31,24 @@ public class InternshipController {
         return ResponseEntity.ok(internship);
     }
 
+    @GetMapping("/search/company/{companyName}")
+    public List<Internship> getInternshipByCompany(@PathVariable String companyName){
+
+        return internshipService.getInternshipByCompany(companyName);
+    }
+
+    @GetMapping("/search/location/{location}")
+    public List<Internship> getInternshipByLocation(@PathVariable String location){
+
+        return internshipService.getInternshipByLocation(location);
+    }
+
+    @GetMapping("/search/description/{description}")
+    public List<Internship> getInternshipByDescription(@PathVariable String description){
+
+        return internshipService.getInternshipByDescription(description);
+    }
+
     @PostMapping
     public ResponseEntity<Internship> createInternship(@RequestBody Internship internship) {
         // Intentional flaw: returns 200 OK instead of 201 CREATED
